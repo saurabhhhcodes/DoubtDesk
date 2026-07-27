@@ -11,67 +11,75 @@ const pdf = require("pdf-parse-fork");
 
 // Forced Refresh: 2026-02-09T06:05:00Z
 export async function POST(req: NextRequest) {
+  try {
+    const formData = await req.formData();
+    const file = formData.get("resume") as File;
+    const jobDescription = (formData.get("jobDescription") as string) || "";
+    const fieldOfInterest = (formData.get("fieldOfInterest") as string) || "";
+    const targetRole = (formData.get("targetRole") as string) || "";
+
+    if (!file) {
+      return NextResponse.json(
+        { error: "Resume file is required" },
+        { status: 400 },
+      );
+    }
+
+    const user = await currentUser();
+    const userEmail = user?.primaryEmailAddress?.emailAddress;
+
+    if (userEmail) {
+      const { isBlocked, errorResponse } = await checkUserBlock(userEmail);
+      if (isBlocked) return errorResponse;
+    }
+
+    // 1. Extract text from PDF using pdf-parse-fork (Robust, no worker issues)
+    const buffer = Buffer.from(await file.arrayBuffer());
+    let resumeText = "";
+
     try {
-        const formData = await req.formData();
-        const file = formData.get("resume") as File;
-        const jobDescription = formData.get("jobDescription") as string || "";
-        const fieldOfInterest = formData.get("fieldOfInterest") as string || "";
-        const targetRole = formData.get("targetRole") as string || "";
+      const data = await pdf(buffer);
+      resumeText = data.text;
+    } catch (parseError: any) {
+      console.error("PDF Parsing Error:", parseError);
+      throw new Error(`PDF Extraction failed: ${parseError.message}`);
+    }
 
-        if (!file) {
-            return NextResponse.json({ error: "Resume file is required" }, { status: 400 });
-        }
+    if (!resumeText || resumeText.trim().length === 0) {
+      return NextResponse.json(
+        { error: "Failed to extract text from the PDF" },
+        { status: 400 },
+      );
+    }
 
-        const user = await currentUser();
-        const userEmail = user?.primaryEmailAddress?.emailAddress;
+    // 3. AI Analysis using Groq
+    const hasJD = !!jobDescription.trim();
+    const hasIntent = !!(fieldOfInterest.trim() || targetRole.trim());
 
-        if (userEmail) {
-            const { isBlocked, errorResponse } = await checkUserBlock(userEmail);
-            if (isBlocked) return errorResponse;
-        }
+    let mode = "general";
+    if (hasJD) mode = "strict_jd";
+    else if (hasIntent) mode = "career_intent";
 
-        // 1. Extract text from PDF using pdf-parse-fork (Robust, no worker issues)
-        const buffer = Buffer.from(await file.arrayBuffer());
-        let resumeText = "";
-
-        try {
-            const data = await pdf(buffer);
-            resumeText = data.text;
-        } catch (parseError: any) {
-            console.error("PDF Parsing Error:", parseError);
-            throw new Error(`PDF Extraction failed: ${parseError.message}`);
-        }
-
-        if (!resumeText || resumeText.trim().length === 0) {
-            return NextResponse.json({ error: "Failed to extract text from the PDF" }, { status: 400 });
-        }
-
-        // 3. AI Analysis using Groq
-        const hasJD = !!jobDescription.trim();
-        const hasIntent = !!(fieldOfInterest.trim() || targetRole.trim());
-
-        let mode = "general";
-        if (hasJD) mode = "strict_jd";
-        else if (hasIntent) mode = "career_intent";
-
-        const systemPrompt = `
+    const systemPrompt = `
 You are a professional ATS (Applicant Tracking System) Expert and Senior Tech Recruiter.
 Your task is to provide a detailed resume analysis report.
 
 Evaluation Mode: ${mode === "strict_jd" ? "Strict Job Description Matching" : mode === "career_intent" ? "Career Intent Alignment" : "General Profile Perception"}
 
 Criteria for Evaluation:
-${mode === "strict_jd"
-                ? `- Keyword Match: Are primary skills from the JD present?
+${
+  mode === "strict_jd"
+    ? `- Keyword Match: Are primary skills from the JD present?
 - Experience Depth: Matches required years/level?
 - Relevance: How well does this resume fit this specific role?`
-                : mode === "career_intent"
-                    ? `- Industry Fit: Is the resume optimized for the "${fieldOfInterest}" field?
+    : mode === "career_intent"
+      ? `- Industry Fit: Is the resume optimized for the "${fieldOfInterest}" field?
 - Target Alignment: Does it reflect the quality expected by "${targetRole}"?
 - Skill Gaps: What skills are missing to be competitive in this specific career path?`
-                    : `- Presentation: Is it formatted professionally?
+      : `- Presentation: Is it formatted professionally?
 - Impact: Uses strong action verbs and quantifiable results?
-- Skill Clarity: Are technical skills clearly categorized?`}
+- Skill Clarity: Are technical skills clearly categorized?`
+}
 
 Output Format:
 You MUST respond with a valid JSON object only. No conversational text.
@@ -102,7 +110,7 @@ You MUST respond with a valid JSON object only. No conversational text.
 }
 `;
 
-        const userPrompt = `
+    const userPrompt = `
 ${mode === "strict_jd" ? `TARGET JOB DESCRIPTION:\n${jobDescription}` : ""}
 ${mode === "career_intent" ? `CAREER INTENT:\nField: ${fieldOfInterest}\nTarget: ${targetRole}` : ""}
 ${mode === "general" ? "MODE: General Portfolio Review" : ""}
@@ -111,55 +119,57 @@ RESUME TEXT:
 ${resumeText}
 `;
 
-        const response = await axios.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            {
-                model: "llama-3.3-70b-versatile",
-                messages: [
-                    { role: "system", content: systemPrompt },
-                    { role: "user", content: userPrompt }
-                ],
-                response_format: { type: "json_object" }
-            },
-            {
-                headers: {
-                    "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
-                    "Content-Type": "application/json",
-                },
-            }
-        );
+    const response = await axios.post(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        response_format: { type: "json_object" },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
 
-        const aiOutput = JSON.parse(response.data.choices[0].message.content);
+    const aiOutput = JSON.parse(response.data.choices[0].message.content);
 
-        // Save to Database if user is authenticated
-        if (userEmail) {
-            // Use field/role as title if job description is empty
-            const displayTitle = jobDescription.trim()
-                ? jobDescription
-                : (fieldOfInterest || targetRole)
-                    ? `${fieldOfInterest}${fieldOfInterest && targetRole ? ' - ' : ''}${targetRole}`.trim()
-                    : "General Analysis";
+    // Save to Database if user is authenticated
+    if (userEmail) {
+      // Use field/role as title if job description is empty
+      const displayTitle = jobDescription.trim()
+        ? jobDescription
+        : fieldOfInterest || targetRole
+          ? `${fieldOfInterest}${fieldOfInterest && targetRole ? " - " : ""}${targetRole}`.trim()
+          : "General Analysis";
 
-            await db.insert(resumeAnalysisTable).values({
-                userEmail,
-                resumeText,
-                resumeName: file.name,
-                jobDescription: displayTitle,
-                analysisData: JSON.stringify(aiOutput)
-            });
-        }
-
-        return NextResponse.json(aiOutput);
-
-    } catch (error: any) {
-        console.error("Resume Analysis Error Detail:", {
-            message: error.message,
-            stack: error.stack,
-            response: error.response?.data
-        });
-        return NextResponse.json({
-            error: error.message || "Failed to analyze resume",
-            detail: error.response?.data || error.stack
-        }, { status: 500 });
+      await db.insert(resumeAnalysisTable).values({
+        userEmail,
+        resumeText,
+        resumeName: file.name,
+        jobDescription: displayTitle,
+        analysisData: JSON.stringify(aiOutput),
+      });
     }
+
+    return NextResponse.json(aiOutput);
+  } catch (error: any) {
+    console.error("Resume Analysis Error Detail:", {
+      message: error.message,
+      stack: error.stack,
+      response: error.response?.data,
+    });
+    return NextResponse.json(
+      {
+        error: error.message || "Failed to analyze resume",
+        detail: error.response?.data || error.stack,
+      },
+      { status: 500 },
+    );
+  }
 }

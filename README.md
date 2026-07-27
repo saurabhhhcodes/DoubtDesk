@@ -57,6 +57,7 @@ DoubtDesk provides a virtual classroom environment where:
 ## Features
 
 ### AI Doubt Solver
+
 - Type a question or upload a photo — AI solves it instantly using Groq-accelerated LLMs.
 - Structured output: Step-by-step breakdown, simplified explanation, and final answer.
 - Interactive follow-ups: click any step to ask for further clarification.
@@ -64,6 +65,7 @@ DoubtDesk provides a virtual classroom environment where:
 - Persistent chat history for continuing previous AI sessions.
 
 ### Virtual Classrooms
+
 - Teachers create classrooms with unique invite codes.
 - Students join using invite codes; recommended classrooms auto-surface by university and year.
 - Three doubt channels per class: **AI Solve**, **Community Board**, **Teacher Lane**.
@@ -71,22 +73,26 @@ DoubtDesk provides a virtual classroom environment where:
 - Anonymous posting — students are assigned randomized identifiers (e.g., `Student_A7X`) to encourage participation without fear.
 
 ### Classroom Analytics
+
 - **Topic Difficulty Heatmap** — highlights which subjects have the most doubts.
 - **Resolution Pulse** — solved vs. pending ratio with circular progress visualization.
 - **Peak Activity Timeline** — 24-hour bar chart showing when students are most active.
 - **Personal AI Mentor** — per-student weak-topic detection after sufficient engagement.
 
 ### Moderation and Safety
+
 - AI-powered content moderation flags abusive, off-topic, or spam content before it is posted.
 - 3-strike system with escalating temporary account blocks (3 days for first block, increasing for subsequent violations).
 - Full audit trail via moderation logs table for admin review.
 
 ### Public Doubt Board
+
 - Open community board (no classroom required) with subject filters.
 - Like, reply, and mark doubts as solved.
 - Accessible to all authenticated users.
 
 ### User Profiles
+
 - Personal dashboard showing doubts asked, replies given, and classrooms joined.
 - Activity statistics including helpful votes received.
 
@@ -119,20 +125,20 @@ Joins/Creates a Classroom (via invite code)
 
 ## Tech Stack
 
-| Layer | Technology | Purpose |
-| :--- | :--- | :--- |
-| **Framework** | Next.js 14 (App Router) | Full-stack React framework with server-side rendering |
-| **Language** | TypeScript | Static type safety across the codebase |
-| **Authentication** | Clerk | User management, session handling, role-based access |
-| **AI Engine** | Groq API (Llama 3.3 / 4) | Ultra-fast LLM inference for doubt solving and moderation |
-| **Database** | Neon PostgreSQL | Serverless Postgres with branching and autoscaling |
-| **ORM** | Drizzle ORM | Type-safe, SQL-like query builder |
-| **Background Jobs** | Inngest | Reliable async workflows and event-driven processing |
-| **UI Components** | Tailwind CSS + shadcn/ui | Utility-first styling with accessible component primitives |
-| **Math Rendering** | KaTeX | Client-side LaTeX equation rendering |
-| **OCR / Vision** | Tesseract.js + Vision LLMs | Image-based doubt input and handwriting recognition |
-| **Notifications** | Sonner | Lightweight toast notification system |
-| **Deployment** | Vercel | Edge-optimized hosting with CI/CD |
+| Layer               | Technology                 | Purpose                                                    |
+| :------------------ | :------------------------- | :--------------------------------------------------------- |
+| **Framework**       | Next.js 14 (App Router)    | Full-stack React framework with server-side rendering      |
+| **Language**        | TypeScript                 | Static type safety across the codebase                     |
+| **Authentication**  | Clerk                      | User management, session handling, role-based access       |
+| **AI Engine**       | Groq API (Llama 3.3 / 4)   | Ultra-fast LLM inference for doubt solving and moderation  |
+| **Database**        | Neon PostgreSQL            | Serverless Postgres with branching and autoscaling         |
+| **ORM**             | Drizzle ORM                | Type-safe, SQL-like query builder                          |
+| **Background Jobs** | Inngest                    | Reliable async workflows and event-driven processing       |
+| **UI Components**   | Tailwind CSS + shadcn/ui   | Utility-first styling with accessible component primitives |
+| **Math Rendering**  | KaTeX                      | Client-side LaTeX equation rendering                       |
+| **OCR / Vision**    | Tesseract.js + Vision LLMs | Image-based doubt input and handwriting recognition        |
+| **Notifications**   | Sonner                     | Lightweight toast notification system                      |
+| **Deployment**      | Vercel                     | Edge-optimized hosting with CI/CD                          |
 
 ---
 
@@ -153,11 +159,12 @@ A live instance of DoubtDesk is deployed at **[doubt-desk-seven.vercel.app](http
 
 To explore the full classroom experience without setting up your own environment, use the sample classroom below after signing in:
 
-| Field | Value |
-| :--- | :--- |
+| Field                     | Value    |
+| :------------------------ | :------- |
 | **Classroom Invite Code** | `DNOIRL` |
 
 **Steps to access:**
+
 1. Visit the [live demo](https://doubt-desk-seven.vercel.app/).
 2. Sign up or sign in using Clerk authentication.
 3. Complete the onboarding flow (select your university, year, and role).
@@ -312,30 +319,30 @@ refactor: extract doubt card into reusable component
 
 ### Difficulty Levels (GSSoC)
 
-| Label | Points | Description |
-| :--- | :--- | :--- |
-| `level 1` | Low | Beginner-friendly tasks: documentation, small UI fixes, adding aria-labels |
-| `level 2` | Medium | Intermediate tasks: new API routes, component refactors, feature additions |
-| `level 3` | High | Advanced tasks: real-time systems, authentication flows, architectural changes |
+| Label     | Points | Description                                                                    |
+| :-------- | :----- | :----------------------------------------------------------------------------- |
+| `level 1` | Low    | Beginner-friendly tasks: documentation, small UI fixes, adding aria-labels     |
+| `level 2` | Medium | Intermediate tasks: new API routes, component refactors, feature additions     |
+| `level 3` | High   | Advanced tasks: real-time systems, authentication flows, architectural changes |
 
 ### Category Labels
 
-| Label | Description |
-| :--- | :--- |
-| `good-first-issue` | Small, well-scoped tasks ideal for first-time contributors |
-| `beginner-friendly` | Slightly more involved but still approachable with guidance |
-| `bug` | Something is broken and needs fixing |
-| `enhancement` | New feature or improvement to existing functionality |
-| `documentation` | Improvements to README, guides, or inline code comments |
-| `frontend` | Changes to UI components, pages, or styling |
-| `backend` | Changes to API routes, database queries, or server logic |
-| `ai` | Changes to AI prompts, model handling, or content moderation |
-| `security` | Security-related fixes or hardening |
-| `ui/ux` | User interface and experience improvements |
-| `gssoc` | Part of the GirlScript Summer of Code program |
-| `priority: high` | Must be resolved urgently |
-| `priority: medium` | Should be addressed in the current cycle |
-| `priority: low` | Nice to have, no immediate deadline |
+| Label               | Description                                                  |
+| :------------------ | :----------------------------------------------------------- |
+| `good-first-issue`  | Small, well-scoped tasks ideal for first-time contributors   |
+| `beginner-friendly` | Slightly more involved but still approachable with guidance  |
+| `bug`               | Something is broken and needs fixing                         |
+| `enhancement`       | New feature or improvement to existing functionality         |
+| `documentation`     | Improvements to README, guides, or inline code comments      |
+| `frontend`          | Changes to UI components, pages, or styling                  |
+| `backend`           | Changes to API routes, database queries, or server logic     |
+| `ai`                | Changes to AI prompts, model handling, or content moderation |
+| `security`          | Security-related fixes or hardening                          |
+| `ui/ux`             | User interface and experience improvements                   |
+| `gssoc`             | Part of the GirlScript Summer of Code program                |
+| `priority: high`    | Must be resolved urgently                                    |
+| `priority: medium`  | Should be addressed in the current cycle                     |
+| `priority: low`     | Nice to have, no immediate deadline                          |
 
 ---
 
@@ -345,39 +352,39 @@ The following is a prioritized list of planned enhancements. Contributions towar
 
 ### Near-Term (v1.1)
 
-| Feature | Description | Status |
-| :--- | :--- | :--- |
-| Testing framework | Set up Jest and React Testing Library for unit and integration tests | Planned |
-| 404 page | Custom not-found page matching the application design system | Open issue |
-| Footer component | Consistent footer across all pages with navigation links | Open issue |
-| README screenshots | Render inline screenshots with proper markdown image syntax | Open issue |
-| Profile page fixes | TypeScript interfaces, stable user lookup, mobile nav, error states | Open issue |
+| Feature            | Description                                                          | Status     |
+| :----------------- | :------------------------------------------------------------------- | :--------- |
+| Testing framework  | Set up Jest and React Testing Library for unit and integration tests | Planned    |
+| 404 page           | Custom not-found page matching the application design system         | Open issue |
+| Footer component   | Consistent footer across all pages with navigation links             | Open issue |
+| README screenshots | Render inline screenshots with proper markdown image syntax          | Open issue |
+| Profile page fixes | TypeScript interfaces, stable user lookup, mobile nav, error states  | Open issue |
 
 ### Mid-Term (v1.2)
 
-| Feature | Description | Status |
-| :--- | :--- | :--- |
+| Feature                 | Description                                                         | Status     |
+| :---------------------- | :------------------------------------------------------------------ | :--------- |
 | Real-time notifications | WebSocket or SSE-based alerts for new doubts, replies, and mentions | Open issue |
-| Dark mode toggle | System-aware and manual dark/light mode switching | Open issue |
-| Global search | Full-text search across doubts with subject and topic filters | Open issue |
-| Helpful upvotes | Allow students to upvote community replies as "helpful" | Open issue |
-| Rate limiting | API-level rate limiting to prevent abuse and ensure fair usage | Open issue |
-| Separate login flows | Distinct authentication paths for students and teachers | Open issue |
+| Dark mode toggle        | System-aware and manual dark/light mode switching                   | Open issue |
+| Global search           | Full-text search across doubts with subject and topic filters       | Open issue |
+| Helpful upvotes         | Allow students to upvote community replies as "helpful"             | Open issue |
+| Rate limiting           | API-level rate limiting to prevent abuse and ensure fair usage      | Open issue |
+| Separate login flows    | Distinct authentication paths for students and teachers             | Open issue |
 
 ### Long-Term (v2.0)
 
-| Feature | Description | Status |
-| :--- | :--- | :--- |
-| Multi-language support | Internationalization (i18n) for Hindi, Tamil, Bengali, and other regional languages | Planned |
-| Mobile application | React Native or PWA for native mobile experience | Planned |
-| Gamification | Points, badges, and leaderboards to reward active participants | Planned |
-| Export and reports | Teachers can export classroom analytics as PDF/CSV reports | Planned |
-| Admin dashboard | Platform-wide moderation panel for project administrators | Planned |
-| AI tutor memory | Persistent context across AI sessions for personalized tutoring | Planned |
-| Doubt de-duplication | AI-powered detection of duplicate or similar doubts with auto-linking | Planned |
-| Video/voice doubts | Support for audio and short video doubt submissions | Planned |
-| Classroom announcements | Teachers can broadcast announcements to all classroom members | Planned |
-| Integration with LMS | Connect with Google Classroom, Moodle, or Canvas for roster sync | Planned |
+| Feature                 | Description                                                                         | Status  |
+| :---------------------- | :---------------------------------------------------------------------------------- | :------ |
+| Multi-language support  | Internationalization (i18n) for Hindi, Tamil, Bengali, and other regional languages | Planned |
+| Mobile application      | React Native or PWA for native mobile experience                                    | Planned |
+| Gamification            | Points, badges, and leaderboards to reward active participants                      | Planned |
+| Export and reports      | Teachers can export classroom analytics as PDF/CSV reports                          | Planned |
+| Admin dashboard         | Platform-wide moderation panel for project administrators                           | Planned |
+| AI tutor memory         | Persistent context across AI sessions for personalized tutoring                     | Planned |
+| Doubt de-duplication    | AI-powered detection of duplicate or similar doubts with auto-linking               | Planned |
+| Video/voice doubts      | Support for audio and short video doubt submissions                                 | Planned |
+| Classroom announcements | Teachers can broadcast announcements to all classroom members                       | Planned |
+| Integration with LMS    | Connect with Google Classroom, Moodle, or Canvas for roster sync                    | Planned |
 
 ---
 
