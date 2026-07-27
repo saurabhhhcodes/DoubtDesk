@@ -69,6 +69,7 @@ Before writing code, it is strongly recommended that you explore the live applic
 **Sample classroom invite code:** `DNOIRL`
 
 Steps:
+
 1. Sign up on the live demo.
 2. Complete the onboarding flow.
 3. Navigate to Classrooms and join using the invite code `DNOIRL`.
@@ -112,14 +113,14 @@ This hands-on context will make your contributions more informed and effective.
 
 Use descriptive, prefixed branch names:
 
-| Prefix | Use Case | Example |
-| :--- | :--- | :--- |
-| `feature/` | New feature | `feature/add-search-to-doubts` |
-| `fix/` | Bug fix | `fix/classroom-invite-code-validation` |
-| `docs/` | Documentation | `docs/add-screenshots-to-readme` |
-| `style/` | UI/styling changes | `style/improve-mobile-sidebar` |
-| `refactor/` | Code refactoring | `refactor/extract-doubt-card-component` |
-| `test/` | Adding or updating tests | `test/add-doubt-card-unit-tests` |
+| Prefix      | Use Case                 | Example                                 |
+| :---------- | :----------------------- | :-------------------------------------- |
+| `feature/`  | New feature              | `feature/add-search-to-doubts`          |
+| `fix/`      | Bug fix                  | `fix/classroom-invite-code-validation`  |
+| `docs/`     | Documentation            | `docs/add-screenshots-to-readme`        |
+| `style/`    | UI/styling changes       | `style/improve-mobile-sidebar`          |
+| `refactor/` | Code refactoring         | `refactor/extract-doubt-card-component` |
+| `test/`     | Adding or updating tests | `test/add-doubt-card-unit-tests`        |
 
 ---
 
@@ -133,17 +134,18 @@ Follow the [Conventional Commits](https://www.conventionalcommits.org/) standard
 
 **Types:**
 
-| Type | When to Use |
-| :--- | :--- |
-| `feat` | Adding a new feature |
-| `fix` | Fixing a bug |
-| `docs` | Documentation changes |
-| `style` | UI/CSS changes (no logic change) |
+| Type       | When to Use                             |
+| :--------- | :-------------------------------------- |
+| `feat`     | Adding a new feature                    |
+| `fix`      | Fixing a bug                            |
+| `docs`     | Documentation changes                   |
+| `style`    | UI/CSS changes (no logic change)        |
 | `refactor` | Code restructuring (no behavior change) |
-| `test` | Adding or updating tests |
-| `chore` | Build, config, or tooling changes |
+| `test`     | Adding or updating tests                |
+| `chore`    | Build, config, or tooling changes       |
 
 **Examples:**
+
 ```
 feat: add loading skeleton to classroom page
 fix: prevent duplicate join on invite code submission
@@ -157,6 +159,7 @@ refactor: extract moderation logic into shared utility
 ## Pull Request Process
 
 1. **Ensure your branch is up to date** with `main`:
+
    ```bash
    git checkout main
    git pull upstream main
@@ -167,6 +170,7 @@ refactor: extract moderation logic into shared utility
 2. **Create the PR** against the `main` branch.
 
 3. **PR title** must follow the commit message format:
+
    ```
    feat: add search functionality to public doubts page
    ```
@@ -185,11 +189,13 @@ refactor: extract moderation logic into shared utility
 ## Code Style Guidelines
 
 ### TypeScript
+
 - Avoid `any` types wherever possible. Define proper interfaces for all data structures.
 - Use `const` by default; use `let` only when reassignment is needed.
 - Never use `var`.
 
 ### React / Next.js
+
 - Use functional components with hooks.
 - Keep components focused — one component per file.
 - Place reusable components in `/components`.
@@ -197,6 +203,7 @@ refactor: extract moderation logic into shared utility
 - Use `"use client"` directive only when client-side interactivity is required.
 
 ### Styling
+
 - Use **Tailwind CSS** exclusively. Do not introduce external CSS files.
 - Match the existing dark theme: `slate-950` backgrounds, `blue-500`/`blue-600` accents.
 - Maintain glassmorphism patterns where applicable (`backdrop-blur`, `border-white/10`).
@@ -204,38 +211,38 @@ refactor: extract moderation logic into shared utility
 
 ### File Organization
 
-| Type | Location | Example |
-| :--- | :--- | :--- |
-| API routes | `/app/api/<feature>/route.ts` | `/app/api/doubts/route.ts` |
-| Page components | `/app/<route>/page.tsx` | `/app/dashboard/page.tsx` |
+| Type                | Location                          | Example                     |
+| :------------------ | :-------------------------------- | :-------------------------- |
+| API routes          | `/app/api/<feature>/route.ts`     | `/app/api/doubts/route.ts`  |
+| Page components     | `/app/<route>/page.tsx`           | `/app/dashboard/page.tsx`   |
 | Reusable components | `/components/<ComponentName>.tsx` | `/components/DoubtCard.tsx` |
-| UI primitives | `/components/ui/<primitive>.tsx` | `/components/ui/button.tsx` |
-| Shared utilities | `/lib/<utility>.ts` | `/lib/moderation.ts` |
-| Database schema | `/configs/schema.ts` | — |
-| Database connection | `/configs/db.tsx` | — |
-| Scripts | `/scripts/<script>.ts` | `/scripts/seed.ts` |
+| UI primitives       | `/components/ui/<primitive>.tsx`  | `/components/ui/button.tsx` |
+| Shared utilities    | `/lib/<utility>.ts`               | `/lib/moderation.ts`        |
+| Database schema     | `/configs/schema.ts`              | —                           |
+| Database connection | `/configs/db.tsx`                 | —                           |
+| Scripts             | `/scripts/<script>.ts`            | `/scripts/seed.ts`          |
 
 ---
 
 ## Issue Labels
 
-| Label | Description |
-| :--- | :--- |
-| `good-first-issue` | Simple, well-scoped. Ideal for first-time contributors. |
+| Label               | Description                                               |
+| :------------------ | :-------------------------------------------------------- |
+| `good-first-issue`  | Simple, well-scoped. Ideal for first-time contributors.   |
 | `beginner-friendly` | Slightly more involved, still approachable with guidance. |
-| `bug` | Something is broken and needs fixing. |
-| `enhancement` | New feature or improvement to existing functionality. |
-| `documentation` | README, guides, inline comments. |
-| `frontend` | UI components, pages, styling. |
-| `backend` | API routes, database, server logic. |
-| `ai` | AI prompts, models, moderation. |
-| `security` | Security-related fixes or hardening. |
-| `ui/ux` | User interface/experience improvements. |
-| `gssoc` | Part of the GirlScript Summer of Code program. |
-| `level 1` | Easy — beginner-level task. |
-| `level 2` | Medium — intermediate-level task. |
-| `level 3` | Hard — advanced-level task. |
-| `help-wanted` | Maintainer needs assistance on this. |
+| `bug`               | Something is broken and needs fixing.                     |
+| `enhancement`       | New feature or improvement to existing functionality.     |
+| `documentation`     | README, guides, inline comments.                          |
+| `frontend`          | UI components, pages, styling.                            |
+| `backend`           | API routes, database, server logic.                       |
+| `ai`                | AI prompts, models, moderation.                           |
+| `security`          | Security-related fixes or hardening.                      |
+| `ui/ux`             | User interface/experience improvements.                   |
+| `gssoc`             | Part of the GirlScript Summer of Code program.            |
+| `level 1`           | Easy — beginner-level task.                               |
+| `level 2`           | Medium — intermediate-level task.                         |
+| `level 3`           | Hard — advanced-level task.                               |
+| `help-wanted`       | Maintainer needs assistance on this.                      |
 
 ---
 

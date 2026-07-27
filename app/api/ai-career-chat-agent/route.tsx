@@ -4,23 +4,26 @@ import { currentUser } from "@clerk/nextjs/server";
 import { checkUserBlock } from "@/lib/auth-utils";
 
 export async function POST(req: any) {
-    try {
-        const user = await currentUser();
-        const email = user?.primaryEmailAddress?.emailAddress;
+  try {
+    const user = await currentUser();
+    const email = user?.primaryEmailAddress?.emailAddress;
 
-        if (email) {
-            const { isBlocked, errorResponse } = await checkUserBlock(email);
-            if (isBlocked) return errorResponse;
-        }
+    if (email) {
+      const { isBlocked, errorResponse } = await checkUserBlock(email);
+      if (isBlocked) return errorResponse;
+    }
 
-        const body = await req.json();
-        const userInput = body.userInput;
+    const body = await req.json();
+    const userInput = body.userInput;
 
-        if (!userInput) {
-            return NextResponse.json({ error: "userInput is required" }, { status: 400 });
-        }
+    if (!userInput) {
+      return NextResponse.json(
+        { error: "userInput is required" },
+        { status: 400 },
+      );
+    }
 
-        const systemPrompt = `
+    const systemPrompt = `
 You are Mentorix AI, an expert career advisor designed to help students and early professionals plan and grow their careers in technology and related fields.
 
 Your Responsibilities:
@@ -77,30 +80,39 @@ Strict Focus Rules:
 Always focus on helping the user move one step closer to their career goal.
 `;
 
-        const response = await axios.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            {
-                model: "llama-3.3-70b-versatile",
-                messages: [
-                    { role: "system", content: systemPrompt },
-                    { role: "user", content: userInput }
-                ],
-            },
-            {
-                headers: {
-                    "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
-                    "Content-Type": "application/json",
-                },
-            }
-        );
+    const response = await axios.post(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userInput },
+        ],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
 
-        const aiResponse = response.data.choices[0].message.content;
+    const aiResponse = response.data.choices[0].message.content;
 
-        return NextResponse.json({ output: aiResponse });
-    } catch (error: any) {
-        console.error("AI Career Chat Error:", error.response?.data || error.message);
-        return NextResponse.json({
-            error: error.response?.data?.error?.message || error.message || "Internal Server Error"
-        }, { status: 500 });
-    }
+    return NextResponse.json({ output: aiResponse });
+  } catch (error: any) {
+    console.error(
+      "AI Career Chat Error:",
+      error.response?.data || error.message,
+    );
+    return NextResponse.json(
+      {
+        error:
+          error.response?.data?.error?.message ||
+          error.message ||
+          "Internal Server Error",
+      },
+      { status: 500 },
+    );
+  }
 }
