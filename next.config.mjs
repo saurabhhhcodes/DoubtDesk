@@ -2,9 +2,9 @@
 const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: [
-      "pdf-parse", 
-      "@remotion/bundler", 
-      "@remotion/renderer", 
+      "pdf-parse",
+      "@remotion/bundler",
+      "@remotion/renderer",
       "ffmpeg-static",
       "openai",
       "esbuild",
@@ -12,7 +12,7 @@ const nextConfig = {
       "axios",
       "tesseract.js",
       "react-katex",
-      "katex"
+      "katex",
     ],
   },
 };

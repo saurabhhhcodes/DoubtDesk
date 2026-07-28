@@ -6,25 +6,29 @@ import { currentUser } from "@clerk/nextjs/server";
 import { checkUserBlock } from "@/lib/auth-utils";
 
 export async function POST(req: NextRequest) {
-    try {
-        const user = await currentUser();
-        const userEmail = user?.primaryEmailAddress?.emailAddress;
+  try {
+    const user = await currentUser();
+    const userEmail = user?.primaryEmailAddress?.emailAddress;
 
-        if (!userEmail) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
+    if (!userEmail) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-        // 0. Check if user is blocked
-        const { isBlocked, errorResponse } = await checkUserBlock(userEmail);
-        if (isBlocked) return errorResponse;
+    // 0. Check if user is blocked
+    const { isBlocked, errorResponse } = await checkUserBlock(userEmail);
+    if (isBlocked) return errorResponse;
 
-        const { targetField, timeline, currentLevel, weeklyCommitment } = await req.json();
+    const { targetField, timeline, currentLevel, weeklyCommitment } =
+      await req.json();
 
-        if (!targetField || !timeline || !currentLevel) {
-            return NextResponse.json({ error: "Required fields are missing" }, { status: 400 });
-        }
+    if (!targetField || !timeline || !currentLevel) {
+      return NextResponse.json(
+        { error: "Required fields are missing" },
+        { status: 400 },
+      );
+    }
 
-        const systemPrompt = `
+    const systemPrompt = `
 You are an expert Career Coach and Curriculum Designer. 
 Your task is to generate a highly structured, actionable, and personalized learning roadmap based on the user's goals.
 
@@ -50,7 +54,7 @@ You MUST respond with a valid JSON object ONLY. No conversational text.
 }
 `;
 
-        const userPrompt = `
+    const userPrompt = `
 TARGET FIELD: ${targetField}
 TIMELINE: ${timeline}
 CURRENT LEVEL: ${currentLevel}
@@ -60,44 +64,46 @@ Generate a comprehensive roadmap for mastering ${targetField} that STRICTLY span
 Ensure the milestones are distributed logically across the whole period.
 `;
 
-        const response = await axios.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            {
-                model: "llama-3.3-70b-versatile",
-                messages: [
-                    { role: "system", content: systemPrompt },
-                    { role: "user", content: userPrompt }
-                ],
-                response_format: { type: "json_object" }
-            },
-            {
-                headers: {
-                    "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
-                    "Content-Type": "application/json",
-                },
-            }
-        );
+    const response = await axios.post(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        response_format: { type: "json_object" },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
 
-        const aiOutput = JSON.parse(response.data.choices[0].message.content);
+    const aiOutput = JSON.parse(response.data.choices[0].message.content);
 
-        // Save to Database
-        await db.insert(roadmapsTable).values({
-            userEmail: userEmail,
-            targetField: targetField,
-            roadmapData: JSON.stringify(aiOutput)
-        });
+    // Save to Database
+    await db.insert(roadmapsTable).values({
+      userEmail: userEmail,
+      targetField: targetField,
+      roadmapData: JSON.stringify(aiOutput),
+    });
 
-        return NextResponse.json(aiOutput);
-
-    } catch (error: any) {
-        console.error("Roadmap Generation Error DETAILS:", {
-            message: error.message,
-            response: error.response?.data,
-            stack: error.stack
-        });
-        return NextResponse.json({
-            error: error.message || "Failed to generate roadmap",
-            details: error.response?.data || error.message
-        }, { status: 500 });
-    }
+    return NextResponse.json(aiOutput);
+  } catch (error: any) {
+    console.error("Roadmap Generation Error DETAILS:", {
+      message: error.message,
+      response: error.response?.data,
+      stack: error.stack,
+    });
+    return NextResponse.json(
+      {
+        error: error.message || "Failed to generate roadmap",
+        details: error.response?.data || error.message,
+      },
+      { status: 500 },
+    );
+  }
 }
