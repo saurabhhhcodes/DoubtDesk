@@ -6,22 +6,25 @@ import { currentUser } from "@clerk/nextjs/server";
 import { checkUserBlock } from "@/lib/auth-utils";
 
 export async function POST(req: NextRequest) {
-    try {
-        const user = await currentUser();
-        const userEmail = user?.primaryEmailAddress?.emailAddress;
+  try {
+    const user = await currentUser();
+    const userEmail = user?.primaryEmailAddress?.emailAddress;
 
-        if (userEmail) {
-            const { isBlocked, errorResponse } = await checkUserBlock(userEmail);
-            if (isBlocked) return errorResponse;
-        }
+    if (userEmail) {
+      const { isBlocked, errorResponse } = await checkUserBlock(userEmail);
+      if (isBlocked) return errorResponse;
+    }
 
-        const { jobDescription, userDetails } = await req.json();
+    const { jobDescription, userDetails } = await req.json();
 
-        if (!jobDescription || !userDetails) {
-            return NextResponse.json({ error: "Job description and user details are required" }, { status: 400 });
-        }
+    if (!jobDescription || !userDetails) {
+      return NextResponse.json(
+        { error: "Job description and user details are required" },
+        { status: 400 },
+      );
+    }
 
-        const systemPrompt = `
+    const systemPrompt = `
 You are an expert Career Coach and Professional Resume/Cover Letter Writer.
 Your task is to write a highly professional, compelling, and tailored cover letter based on the provided Job Description and User Details.
 
@@ -36,7 +39,7 @@ Output Format:
 Return only the text of the cover letter. Do not include any conversational filler or meta-commentary.
 `;
 
-        const userPrompt = `
+    const userPrompt = `
 JOB DESCRIPTION:
 ${jobDescription}
 
@@ -46,42 +49,47 @@ ${userDetails}
 Write a professional cover letter based on these details.
 `;
 
-        const response = await axios.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            {
-                model: "llama-3.3-70b-versatile",
-                messages: [
-                    { role: "system", content: systemPrompt },
-                    { role: "user", content: userPrompt }
-                ],
-                temperature: 0.7,
-            },
-            {
-                headers: {
-                    "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
-                    "Content-Type": "application/json",
-                },
-            }
-        );
+    const response = await axios.post(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        temperature: 0.7,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
 
-        const coverLetter = response.data.choices[0].message.content;
+    const coverLetter = response.data.choices[0].message.content;
 
-        // Save to Database if user is authenticated
-        if (userEmail) {
-            await db.insert(coverLettersTable).values({
-                userEmail,
-                jobDescription,
-                userDetails,
-                coverLetter
-            });
-        }
-
-        return NextResponse.json({ coverLetter });
-
-    } catch (error: any) {
-        console.error("Cover Letter Generation Error:", error.response?.data || error.message);
-        return NextResponse.json({
-            error: error.message || "Failed to generate cover letter",
-        }, { status: 500 });
+    // Save to Database if user is authenticated
+    if (userEmail) {
+      await db.insert(coverLettersTable).values({
+        userEmail,
+        jobDescription,
+        userDetails,
+        coverLetter,
+      });
     }
+
+    return NextResponse.json({ coverLetter });
+  } catch (error: any) {
+    console.error(
+      "Cover Letter Generation Error:",
+      error.response?.data || error.message,
+    );
+    return NextResponse.json(
+      {
+        error: error.message || "Failed to generate cover letter",
+      },
+      { status: 500 },
+    );
+  }
 }
