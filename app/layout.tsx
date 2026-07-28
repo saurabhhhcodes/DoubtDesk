@@ -1,21 +1,19 @@
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
-import {
-  ClerkProvider,
-} from '@clerk/nextjs'
+import { ClerkProvider } from "@clerk/nextjs";
 import { Provider } from "./provider";
 import Footer from "@/components/Footer";
 
-
 const AppFont = DM_Sans({
-  weight: ['400', '500', '700'],
-  subsets: ['latin'],
-  variable: '--font-app',
-})
+  weight: ["400", "500", "700"],
+  subsets: ["latin"],
+  variable: "--font-app",
+});
 export const metadata: Metadata = {
   title: "DoubtDesk - AI Doubt Solver",
-  description: "DoubtDesk is an AI-powered collaborative classroom platform where students get instant doubt resolution, teachers manage virtual classrooms, and analytics drive better learning outcomes.",
+  description:
+    "DoubtDesk is an AI-powered collaborative classroom platform where students get instant doubt resolution, teachers manage virtual classrooms, and analytics drive better learning outcomes.",
 };
 
 export default function RootLayout({
@@ -26,12 +24,10 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body
-          className={AppFont.className}
-        >
+        <body className={AppFont.className}>
           <Provider>
             {children}
-            <Footer/>
+            <Footer />
           </Provider>
         </body>
       </html>

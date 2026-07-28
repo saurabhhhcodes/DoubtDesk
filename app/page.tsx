@@ -1,8 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { SignInButton, SignUpButton, SignedIn, SignedOut, useClerk, UserButton } from "@clerk/nextjs";
-import { Sparkles, FileText, Map, MessageCircle, FileEdit, ArrowRight, Mail, Linkedin, Github } from "lucide-react";
+import {
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  useClerk,
+  UserButton,
+} from "@clerk/nextjs";
+import {
+  Sparkles,
+  FileText,
+  Map,
+  MessageCircle,
+  FileEdit,
+  ArrowRight,
+  Mail,
+  Linkedin,
+  Github,
+} from "lucide-react";
 import Link from "next/link";
 import {
   AlertDialog,
@@ -20,7 +37,7 @@ export default function Home() {
   const { signOut } = useClerk();
 
   const handleSignOut = async () => {
-    await signOut({ redirectUrl: '/' });
+    await signOut({ redirectUrl: "/" });
   };
 
   return (
@@ -28,7 +45,10 @@ export default function Home() {
       {/* Navbar */}
       <header className="fixed w-full bg-slate-950/80 backdrop-blur-xl border-b border-white/5 z-50">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <Link
+            href="/"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
             <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-[0_0_20px_rgba(37,99,235,0.3)]">
               D
             </div>
@@ -52,18 +72,25 @@ export default function Home() {
             </SignedOut>
             <SignedIn>
               <div className="flex items-center gap-4">
-                <Link href="/rooms" className="hidden sm:block px-4 py-2 text-sm font-semibold text-slate-300 hover:text-white transition-colors">
+                <Link
+                  href="/rooms"
+                  className="hidden sm:block px-4 py-2 text-sm font-semibold text-slate-300 hover:text-white transition-colors"
+                >
                   Classrooms
                 </Link>
-                <Link href="/profile" className="hidden sm:block px-4 py-2 text-sm font-semibold text-slate-300 hover:text-white transition-colors">
+                <Link
+                  href="/profile"
+                  className="hidden sm:block px-4 py-2 text-sm font-semibold text-slate-300 hover:text-white transition-colors"
+                >
                   Profile
                 </Link>
-                <UserButton 
+                <UserButton
                   afterSignOutUrl="/"
                   appearance={{
                     elements: {
-                      userButtonAvatarBox: "w-10 h-10 border border-white/20 shadow-sm"
-                    }
+                      userButtonAvatarBox:
+                        "w-10 h-10 border border-white/20 shadow-sm",
+                    },
                   }}
                 />
               </div>
@@ -76,13 +103,18 @@ export default function Home() {
       <AlertDialog open={showSignOutDialog} onOpenChange={setShowSignOutDialog}>
         <AlertDialogContent className="bg-slate-900 border-white/10 text-white">
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure you want to sign out?</AlertDialogTitle>
+            <AlertDialogTitle>
+              Are you sure you want to sign out?
+            </AlertDialogTitle>
             <AlertDialogDescription className="text-slate-400">
-              You will need to log in again to access your classroom insights and doubt-solving history.
+              You will need to log in again to access your classroom insights
+              and doubt-solving history.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-white/5 border-white/10 text-white hover:bg-white/10">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="bg-white/5 border-white/10 text-white hover:bg-white/10">
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleSignOut}
               className="bg-red-600 hover:bg-red-700 text-white border-none"
@@ -110,7 +142,9 @@ export default function Home() {
             </h2>
 
             <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed">
-              DoubtDesk is your AI-powered classroom companion. Get instant doubt solving, detailed teacher analytics, and participate in community boards for a smarter learning experience.
+              DoubtDesk is your AI-powered classroom companion. Get instant
+              doubt solving, detailed teacher analytics, and participate in
+              community boards for a smarter learning experience.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-16">
@@ -131,7 +165,6 @@ export default function Home() {
                 </SignUpButton>
               </SignedOut>
             </div>
-
           </div>
         </section>
 
@@ -145,7 +178,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
         </div>
       </main>
-{/*Here's Your Previous Footer. I have just commented it in case */}
+      {/*Here's Your Previous Footer. I have just commented it in case */}
       {/* Footer
       <footer className="border-t border-white/5 bg-slate-950/50 py-5">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6 text-slate-500">
